@@ -1,0 +1,785 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=1024" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <title>&lt;Superheld/&gt; | Web-Applikationen mit AngularJS | Joachim Weinbrenner</title>
+    <meta name="description" content="Betrachtet man die Entwicklung der client-seitigen Web-Frameworks, so sticht in jüngster Zeit ein Kandidat mit enormen Zuwachsraten heraus: AngularJS. Das JavaScript-Framework bietet einen optimalen Weg zur Trennung von Design und Anwendungslogik sowie der Anbindung an Backends. Der Vortrag gibt eine Einführung in die Implementierung von AngularJS-Anwendungen und zeigt Wege zum Aufbau von modernen, hoch skalierbaren Web-Architekturen." />
+    <meta name="author" content="Joachim Weinbrenner" />
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:regular,semibold,italic,italicsemibold|PT+Sans:400,700,400italic,700italic|PT+Serif:400,700,400italic,700italic" rel="stylesheet" />
+    <link href="css/impress.css" rel="stylesheet" />
+    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link href="google-code-prettify/prettify.css" type="text/css" rel="stylesheet" />
+	<script type="text/javascript" src="google-code-prettify/prettify.js"></script>
+	<script type="text/javascript" src="js/angular.min.js"></script>
+	<script type="text/javascript" src="js/app.js"></script>
+</head>
+
+<body ng-app="JLApp" class="impress-not-supported" onload="prettyPrint()">
+
+<div class="fallback-message">
+    <p>Your browser <b>doesn't support the features required</b> by impress.js, so you are presented with a simplified version of this presentation.</p>
+    <p>For the best experience please use the latest <b>Chrome</b>, <b>Safari</b> or <b>Firefox</b> browser.</p>
+</div>
+
+<div id="impress">
+
+    <!--
+		Falls Navigationshinweis wieder gewünscht: id von "titelfolie" wieder in "bored" umbenennen!
+    -->
+    <div id="titelfolie" class="step slide jlslide" data-x="-1500" data-y="-1500">
+        <p class="jltitel">&lt;Superheld/&gt;</p>
+        <p class="jlsubtitel">Web-Applikationen mit AngularJS</p>
+        <p class="jlreferent">Joachim Weinbrenner</p>
+        <p class="jlcompany">jsolutions</p>
+    </div>
+    
+    <div id="einfuehrung1" class="step slide jlslide" data-x="0" data-y="-1500">
+    	<img alt="AngularJS Logo" src="img/angularJSlarge.png">
+    	<h1>Was ist AngularJS?</h1>
+    	<ul>
+    		<li>Javascript MV*-Framework</li>
+    		<li>by Google</li>
+    		<li>modular</li>
+    		<li>lesbar</li>
+    		<li>erweiterbar</li>
+    		<li>testbar</li>
+    	</ul>
+    	<img class="googletrends" alt="Google Trends Javascript Frameworks" src="img/googletrends.png"/>
+    </div>
+    
+    <div id="overview1" class="step overview" data-x="2000" data-y="1500" data-scale="8"></div>
+    
+    <!-- THE BASICS -->
+    
+    <div id="basics" class="step sectionheader" data-x="-1500" data-y="400">
+    	<h1>Basics</h1>
+    </div>
+    
+    <div id="helloangular1" class="step" data-x="-1500" data-y="1000">
+    	<h2>AngularJS Ausdruck</h2>
+    	<pre class="prettyprint">
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;script src="js/angular.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body ng-app&gt;
+    &lt;p&gt;Ein einfacher Angular Ausdruck: <code>{{</code> 1 + 1 }}&lt;/p&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+    	</pre>
+    	<p>Ergebnis:</p>
+    	<p>Ein einfacher Angular Ausdruck: {{ 1 + 1 }}</p>    	
+    </div> 
+
+    <div id="helloangular2" class="step" data-x="-1500" data-y="2000">
+    	<h2>Hello Angular</h2>
+    	<pre class="prettyprint">
+Dein Name: &lt;input type="text" ng-model="name"&gt;
+&lt;p&gt;Hello <code>{{</code>name}}!&lt;/p&gt; 
+    	</pre>
+    	<p>Ergebnis:</p>
+    	<p>Dein Name: <input type="text" ng-model="name"></p>
+		<p>Hallo {{name}}!</p>
+    </div>
+    
+    <div id="simplecontroller" class="step" data-x="-1500" data-y="3000">
+    	<h2>Controller</h2>
+		<pre class="prettyprint">
+&lt;div ng-controller="ToggleCtrl"&gt;
+  &lt;button ng-click="toggle()"&gt;ON/OFF&lt;/button&gt;
+  &lt;p ng-show="sichtbar"&gt;Hello Controller!&lt;/p&gt;
+&lt;/div&gt;
+		</pre>
+		<pre class="prettyprint">
+function ToggleCtrl($scope) {
+  $scope.sichtbar = true;
+  $scope.toggle = function() {
+    $scope.sichtbar = !$scope.sichtbar;
+  };
+}		
+		</pre>
+		<div ng-controller="ToggleCtrl">
+			<p><button ng-click="toggle()">ON/OFF</button><span ng-show="sichtbar"> Hello Controller!</span></p>
+		</div>
+    </div>
+    
+	<div id="simplefilter" class="step" data-x="-1500" data-y="4000">
+		<h2>Filter</h2>
+    	<pre class="prettyprint">
+Dein Name: &lt;input type="text" ng-model="name"&gt;
+&lt;p&gt;Hello <code>{{</code>name | uppercase}}!&lt;/p&gt; 
+    	</pre>
+    	<p>Ergebnis:</p>
+    	<p>Dein Name: <input type="text" ng-model="name2"></p>
+		<p>Hallo {{name2 | uppercase}}!</p>
+    </div>
+    
+    <div id="basicdirective" class="step" data-x="-1500" data-y="5000">
+		<h2>Directive</h2>
+    	<pre class="prettyprint">
+&lt;div <code>ng-</code>init="pos = 'Unbekannt'"&gt;
+  &lt;img src="img/angularJSlarge.png"
+       <code>ng-</code>mouseover="pos = 'Über Bild'"/&gt;
+  &lt;button <code>ng-</code>mouseover="pos = 'Über Button'"&gt;
+          Ein Button&lt;/button&gt;
+  &lt;p&gt;Position: <code>{{</code>pos}}&lt;/p&gt;
+&lt;/div&gt;
+		</pre>
+		<div ng-init="pos = 'Unbekannt'">
+			<img src="img/angularJSlarge.png" ng-mouseover="pos = 'Über Bild'"/>&nbsp;&nbsp;&nbsp;&nbsp;
+			<button ng-mouseover="pos = 'Über Button'">Ein Button</button>
+			<p>Position: {{pos}}</p>
+		</div>
+	</div>
+	    
+    
+	<!-- CONTROLLERS -->    
+
+    <div id="overview2" class="step overview" data-x="2000" data-y="1500" data-scale="8"></div>
+
+    <div id="controller" class="step sectionheader" data-x="0" data-y="400">
+    	<h1>Controller</h1>
+    </div>
+    
+    <div id="scopevalue" class="step" data-x="0" data-y="1000">
+    	<h2>Scope und Wert</h2>
+    	<pre class="prettyprint">
+&lt;div ng-controller="DatumCtrl"&gt;
+  &lt;p&gt;<code>{{</code>datum}}&lt;/p&gt;
+&lt;/div&gt;
+		</pre>
+		<pre class="prettyprint">
+var DatumCtrl = function($scope) {
+  $scope.datum = new Date();
+};   	
+    	</pre>
+    	<div ng-controller="DatumCtrl">
+			<p>{{datum}}</p>
+		</div>
+    </div>
+    
+    <div id="controllerfunction" class="step" data-x="0" data-y="2000">
+    	<h2>Funktionen im Controller</h2>
+    	<pre class="prettyprint">
+&lt;div ng-controller="SqrCtrl"&gt;
+  Eine Zahl: &lt;input type="text" ng-model="zahl"&gt;&lt;/input&gt;
+  Quadrat: <code>{{</code>getSqr()}}
+&lt;/div&gt;
+    	</pre>
+     	<pre class="prettyprint">
+var SqrCtrl = function($scope) {
+  $scope.zahl = 1;
+
+  $scope.getSqr = function() {
+    return $scope.zahl * $scope.zahl;
+  };
+};
+    	</pre>
+    	<div ng-controller="SqrCtrl">
+    		<p>Eine Zahl: <input type="text" ng-model="zahl"></input></p>
+    		<p>Quadrat: {{getSqr()}}</p>
+    	</div>
+    </div>
+    
+    <div id="nestedcontroller1" class="step" data-x="0" data-y="3000">
+    	<h2>Verschachtelte Controller</h2>
+    	<pre class="prettyprint">
+var app = angular.module("JLApp", []);
+
+app.controller("ElternCtrl", function($scope) {
+  $scope.name = "Tom";
+});
+
+app.controller("KindCtrl", function($scope) {
+  $scope.name = "Fritz";
+});    	</pre>
+    </div>
+    <div id="nestedcontroller2" class="step" data-x="0" data-y="3600">
+    	<pre class="prettyprint">
+&lt;body ng-app="JLApp"&gt;
+...
+&lt;div ng-controller="ElternCtrl"&gt;
+  Eltern-Name: &lt;input type="text" ng-model="name"&gt;
+  &lt;div class="nested" ng-controller="KindCtrl"&gt;
+    Kind-Name: &lt;input type="text" ng-model="name"&gt;
+    Kind-Eltern-Name: 
+       &lt;input type="text" ng-model="$parent.name"&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+    	</pre>
+    	<div ng-controller="ElternCtrl">
+      		<p>Eltern-Name: <input type="text" ng-model="name"></p>
+      		<div class="nested" ng-controller="KindCtrl">
+      			<p>Kind-Name: <input type="text" ng-model="name"></p>
+      			<p>Kind-Eltern-Name: <input type="text" ng-model="$parent.name"></p>
+      		</div>
+      	</div>
+    </div>
+    
+    <!-- DIRECTIVES -->
+    
+    <div id="overview3" class="step overview" data-x="2000" data-y="1500" data-scale="8"></div>
+
+    <div id="directives"  class="step sectionheader" data-x="1500" data-y="400">
+    	<h1>Directives</h1>
+    </div>
+    
+    <div id="angulardirectives"  class="step" data-x="1500" data-y="1000">
+    	<h2>Zahlreiche mitgelieferte Directives</h2>
+    	z.B.:
+    	<ul>
+    		<li>ngHide / ngShow</li>
+    		<li>ngClick</li>
+    		<li>Mouse-Events (z.B. ngMouseenter)</li>
+    		<li>Key-Events (z.B. ngKeydown)</li>
+    		<li>ngRepeat</li>
+    		<li>...</li>
+    	</ul>
+    </div>
+    
+    <div id="directivengdisabled" class="step" data-x="1500" data-y="2000">
+    	<h2>Beispiel: ngDisabled</h2>
+    	<pre class="prettyprint">
+&lt;label&gt;
+  &lt;input type="checkbox" ng-model="checked"/&gt;
+  Ich stimme zu!
+&lt;/label&gt;
+&lt;button ng-disabled="!checked"&gt;Jetzt bestellen&lt;/button&gt;
+    	</pre>
+    	<label><input type="checkbox" ng-model="checked"/>Ich stimme zu!</label>
+		<button ng-disabled="!checked">Jetzt bestellen</button>
+    </div>
+    
+    <div id="directivengrepeat1" class="step" data-x="1500" data-y="3000">
+    	<h2>Beispiel: ngRepeat</h2>
+    	<pre class="prettyprint">
+app.controller("DevsCtrl", function($scope) {
+	$scope.devs = [
+	    { name: "Lisa", speciality: "HTML/JS" },
+	    { name: "Kim", speciality: ".Net" },
+	    { name: "Berta", speciality: "Java" },
+	    { name: "Xaver", speciality: "AngularJS" }
+	];
+});
+		</pre>
+	</div>
+	<div id="directivengrepeat2" class="step" data-x="1500" data-y="3600">
+    	<pre class="prettyprint">
+&lt;div ng-controller="DevsCtrl"&gt;
+  &lt;ul&gt;
+    &lt;li ng-repeat="dev in devs"&gt;
+      <code>{{</code>dev.name}} (<code>{{</code>dev.speciality}})
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+		</pre>
+		<div ng-controller="DevsCtrl">
+			<ul>
+				<li ng-repeat="dev in devs">{{dev.name}} ({{dev.speciality}})</li>
+			</ul>
+		</div>
+    </div>
+    
+    <div id="simpledirective1" class="step" data-x="1500" data-y="4600">
+		<h2>Eine einfache eigene Directive</h2>
+    	<pre class="prettyprint">
+&lt;body ng-app="JLApp"&gt;
+...
+&lt;label for="checkbox"&gt;
+  &lt;input id="checkbox" type="checkbox" 
+         ng-model="sichtbar"&gt;ON/OFF
+&lt;/label&gt;
+&lt;div showme="sichtbar"&gt;
+  &lt;p&gt;ON/OFF per Directive&lt;/p&gt;
+&lt;/div&gt;
+		</pre>
+	</div>
+	<div id="simpledirective2" class="step" data-x="1500" data-y="5100">
+		<pre class="prettyprint">
+var app = angular.module("JLApp", []);
+app.directive("showme", function() {
+  return {
+    link: function(scope, element, attributes) {
+      scope.$watch(attributes.showme, function(value){
+        element.css('display', value ? '' : 'none');
+      });
+    }
+  };
+});
+		</pre>
+		<label for="checkbox">
+			<input id="checkbox" type="checkbox" ng-model="sichtbar">ON/OFF
+		</label>
+		<div showme="sichtbar">
+			<p>ON/OFF per Directive</p>
+		</div>
+	</div>
+	
+	<div id="superhelddirective" class="step" data-x="1500" data-y="6100">
+		<h2>&lt;superheld&gt;-Directive</h2>
+		<pre class="prettyprint">
+app.directive('superheld', function() {
+  return {
+    restrict: 'E',
+    template:
+      '&lt;div&gt;SUPER-&lt;span ng-transclude&gt;&lt;/span&gt;!!!&lt;/div&gt;',
+    transclude: true
+  };
+});
+		</pre>
+		<pre class="prettyprint">
+&lt;superheld&gt;
+  toll
+&lt;/superheld&gt;
+		</pre>
+		<superheld>
+			toll
+		</superheld>
+	</div>
+	
+	<div id="directiveoptions" class="step" data-x="1500" data-y="7100">
+		<h2>Directive Options</h2>
+		<pre>
+restrict   => E(Element), A(Attribute), 
+              C(Class), M(Comment)
+priority   => Auswertereihenfolge
+template, templateUrl => Template
+replace    => Element ersetzen
+transclude => Kindelemente im Template platzieren
+scope      => neuen Scope anlegen
+link       => Dynamisches Data Binding
+compile    => DOM Template beim Laden manipulieren
+...
+		</pre>
+	</div>
+	
+    
+    <!-- FILTERS -->
+    
+    <div id="overview4" class="step overview" data-x="2000" data-y="1500" data-scale="8"></div>
+
+    <div id="filters" class="step sectionheader" data-x="3000" data-y="400">
+    	<h1>Filter</h1>
+    </div>
+    
+    <div id="angularfilters"  class="step" data-x="3000" data-y="1000">
+    	<h2>Mitgelieferte Filter</h2>
+    	z.B.:
+    	<ul>
+    		<li>currency</li>
+    		<li>date</li>
+    		<li>json</li>
+    		<li>upper-/lowercase</li>
+    		<li>orderBy</li>
+    		<li>...</li>
+    	</ul>
+    </div>
+    
+    <div id="filterdate" class="step" data-x="3000" data-y="2000">
+    	<h2>Beispiel: date</h2>
+    	<pre class="prettyprint">
+&lt;div ng-controller="DatumCtrl"&gt;
+  &lt;p&gt;Datum: <code>{{</code>datum | date:"dd.MM.yyyy"}}&lt;/p&gt;
+&lt;/div&gt;
+    	</pre>
+    	<div ng-controller="DatumCtrl">
+    		<p>Datum: {{datum | date:"dd.MM.yyyy"}}</p>
+    	</div>
+    </div>
+    
+    <div id="filterorderby" class="step" data-x="3000" data-y="3000">
+    	<h2>Beispiel: orderBy</h2>
+    	<pre class="prettyprint">
+&lt;div ng-controller="DevsCtrl" ng-init="reverse='false'"&gt;
+  &lt;a href="" ng-click="reverse=!reverse"&gt;asc/dsc&lt;/a&gt;
+  &lt;ul&gt;
+    &lt;li ng-repeat="dev in devs | orderBy:'name':reverse"&gt;
+      <code>{{</code>dev.name}} (<code>{{</code>dev.speciality}})
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+    	</pre>
+    	<div ng-controller="DevsCtrl" ng-init="reverse='false'">
+    		<a href="" ng-click="reverse=!reverse">asc/dsc</a>
+			<ul>
+				<li ng-repeat="dev in devs | orderBy:'name':reverse">{{dev.name}} ({{dev.speciality}})</li>
+			</ul>
+		</div>
+    </div>
+
+    <div id="filtereigener1" class="step" data-x="3000" data-y="4000">
+    	<h2>Eigener Filter</h2>
+    	<pre class="prettyprint">
+&lt;div ng-controller="DevsCtrl"&gt;
+  &lt;ul&gt;
+    &lt;li ng-repeat="dev in devs | entferne:'Berta'"&gt;
+      <code>{{</code>dev.name}} (<code>{{</code>dev.speciality}})
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;    	
+    	</pre>
+    </div>
+    <div id="filtereigener2" class="step" data-x="3000" data-y="4600">
+    	<pre class="prettyprint">
+app.filter("entferne", function() {
+  return function(input, entferne) {
+    var erg = [];
+    for (var i=0; i&lt;input.length; i++) {
+      if (input[i].name !== entferne) {
+        erg.push(input[i]);
+      }
+    }
+    return erg;
+  };
+});
+    	</pre>
+    	<div ng-controller="DevsCtrl">
+			<ul>
+				<li ng-repeat="dev in devs | entferne:'Berta'">{{dev.name}} ({{dev.speciality}})</li>
+			</ul>
+		</div>
+	</div>    
+
+    <div id="filterverkettung" class="step" data-x="3000" data-y="5600">
+    	<h2>Verkettung von Filtern</h2>
+    	<pre class="prettyprint">
+&lt;div ng-controller="DevsCtrl" ng-init="reverse='false'"&gt;
+  &lt;a href="" ng-click="reverse=!reverse"&gt;asc/dsc&lt;/a&gt;
+  &lt;ul&gt;
+    &lt;li ng-repeat="dev in devs | entferne:'Berta'
+                    | orderBy:'name':reverse"&gt;
+      <code>{{</code>dev.name}} (<code>{{</code>dev.speciality}})
+    &lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+    	</pre>
+    	<div ng-controller="DevsCtrl" ng-init="reverse='false'">
+    		<a href="" ng-click="reverse=!reverse">asc/dsc</a>
+			<ul>
+				<li ng-repeat="dev in devs | entferne:'Berta' | orderBy:'name':reverse">{{dev.name}} ({{dev.speciality}})</li>
+			</ul>
+		</div>
+	</div>
+	
+
+    <!-- SERVICES -->
+    
+    <div id="overview5" class="step overview" data-x="2000" data-y="1500" data-scale="8"></div>
+
+    <div id="services" class="step sectionheader" data-x="4500" data-y="400">
+    	<h1>Services</h1>
+    </div>
+    
+    <div id="mitgelieferteservices" class="step" data-x="4500" data-y="1000">
+    	<h2>Zahlreiche mitgelieferte Services, z.B.:</h2>
+    	<ul>
+    		<li>$http</li>
+    		<li>$locale</li>
+    		<li>$log</li>
+    		<li>$rootScope</li>
+    		<li>$timeout</li>
+    		<li>$window</li>
+    	</ul>
+    </div>
+    
+    <div id="timerbeispiel1" class="step" data-x="4500" data-y="2000">
+    	<h2>Beispiel: Ein Countdown</h2>
+    	<pre class="prettyprint">
+function TimerCtrl($scope, $timeout) {
+  $scope.timer = 10;
+
+  $scope.start = function() {
+    var stop = $timeout(function(){
+      if($scope.timer > 0){
+        $scope.timer = $scope.timer - 1;
+        $scope.start();
+      } else {
+        $timeout.cancel(stop);
+      }
+    }, 1000);
+  };
+};
+    	</pre>
+    </div>
+    <div id="timerbeispiel2" class="step" data-x="4500" data-y="2500">
+    	<pre class="prettyprint">
+&lt;div ng-controller="TimerCtrl"&gt;
+  &lt;button ng-click="start()"&gt;START&lt;/button&gt;
+  &lt;p&gt;Noch <code>{{</code>timer}} sec!&lt;/p&gt;    	
+&lt;/div&gt;
+    	</pre>
+    	<div ng-controller="TimerCtrl">
+			<button ng-click="start()">START</button>
+    		<p>Noch {{timer}} sec!</p>    	
+    	</div>
+    </div>
+    
+    <div id="beispielservice1" class="step" data-x="4500" data-y="3500">
+    	<h2>Ein einfacher Beispielservice:</h2>
+    	<pre class="prettyprint">
+app.factory("OSService", function() {
+  var os = [ "Linux", "MacOS", "Windows" ];
+  return {
+    all : function() {
+      return os;
+    },
+    first : function() {
+      return os[0];
+    }
+  };
+});
+    	</pre>
+    </div>
+    <div id="beispielservice2" class="step" data-x="4500" data-y="4000">
+    	<pre class="prettyprint">
+app.controller("OSAllCtrl", function($scope, OSService) {
+  $scope.oss = OSService.all();
+});
+
+app.controller("OSFirstCtrl", function($scope, OSService) {
+  $scope.firstOS = OSService.first();
+});
+    	</pre>
+    </div>
+    <div id="beispielservice3" class="step" data-x="4500" data-y="4500">
+    	<pre class="prettyprint">
+&lt;div ng-controller="OSAllCtrl"&gt;
+  &lt;ul&gt;
+    &lt;li ng-repeat="os in oss"&gt;<code>{{</code>os}}&lt;/li&gt;
+    &lt;li ng-controller="OSFirstCtrl"&gt;
+           &lt;i&gt;First: <code>{{</code>firstOS}}&lt;/i&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+    	</pre>
+		<div ng-controller="OSAllCtrl">
+			<ul>
+				<li ng-repeat="os in oss">{{os}}</li>
+				<li ng-controller="OSFirstCtrl"><i>First: {{firstOS}}</i></li>
+			</ul>
+		</div>
+	</div>
+    
+    <div id="overview6" class="step overview" data-x="2000" data-y="1500" data-scale="8"></div>
+
+    <div id="praxis" class="step sectionheader" data-x="6000" data-y="400">
+    	<h1>Praxis</h1>
+    </div>
+    
+    <div id="praxishttp1" class="step" data-x="6000" data-y="1000">
+    	<h2>AJAX-Requests</h2>
+    	<pre class="prettyprint">
+&lt;div ng-controller="BuecherCtrl"&gt;
+  &lt;ul&gt;
+    &lt;li ng-repeat="buch in buecher"&gt;<code>{{</code>buch.titel}}&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+    	</pre>
+    </div>
+    <div id="praxishttp2" class="step" data-x="6000" data-y="1600">
+    	<pre class="prettyprint">
+app.controller("BuecherCtrl", function($scope, $http) {
+  $http.get('exampledata/buecher.json').
+  success(function(data, status, headers, config) {
+    $scope.buecher = data;
+  }).
+  error(function(data, status, headers, config) {
+    // log error
+  });
+});
+    	</pre>
+    	<div ng-controller="BuecherCtrl">
+			<ul>
+				<li ng-repeat="buch in buecher">{{buch.titel}}</li>
+			</ul>
+		</div>
+    </div>
+    
+    <div id="praxishttp3" class="step" data-x="6000" data-y="2600">
+    	<h2>Methoden in $http</h2>
+    	<ul>
+    		<li>$http.get</li>
+			<li>$http.head</li>
+			<li>$http.post</li>
+			<li>$http.put</li>
+			<li>$http.delete</li>
+			<li>$http.jsonp</li>
+    	</ul>
+    </div>
+    
+    <div id="praxisrestful1" class="step" data-x="6000" data-y="3600">
+    	<h2>RESTful: ngResource</h2>
+    	<pre class="prettyprint">
+app.factory('Buecher', ['$resource', function($resource){
+  return $resource('/buecher/:buchId',
+    {buchId: '@id'},
+    {kaufen: {method:'POST',
+              params:{kaufen:true}, 
+              isArray:false});
+}]);
+    	</pre>
+    </div>
+    
+    <div id="praxisrestful2" class="step" data-x="6000" data-y="4200">
+    	<table class="codetable">
+    		<thead><tr><td>Call</td><td>Method</td><td>URL</td><td>Return</td></tr></thead>
+    		<tr><td>Buecher.query()</td><td>GET</td><td>/buecher</td><td>JSON Array</td></tr>
+    		<tr><td>Buecher.get({id: 47})</td><td>GET</td><td>/buecher/47</td><td>Single JSON</td></tr>
+    		<tr><td>Buecher.save({}, buch)</td><td>POST</td><td>/buecher mit post data "buch"</td><td>Single JSON</td></tr>
+    		<tr><td>Buecher.save({id: 48}, buch)</td><td>POST</td><td>/buecher/48 mit post data "buch"</td><td>Single JSON</td></tr>
+    		<tr><td>Buecher.remove({id: 47})</td><td>DELETE</td><td>/buecher/47</td><td>Single JSON</td></tr>
+    		<tr><td>Buecher.delete({id: 47})</td><td>DELETE</td><td>/buecher/47</td><td>Single JSON</td></tr>
+    	</table>
+    </div>
+    
+    <div id="praxisrestful3" class="step" data-x="6000" data-y="5200">
+    	<h2>Buecher im Einsatz</h2>
+    	<pre class="prettyprint">
+// alle Bücher laden:
+var buecher = Buecher.query();
+
+// Ein Buch laden und direkt im Callback arbeiten:
+Buecher.get({id: 123}, function(buch) {
+  buch.autor = "Bugs Bunny";
+  // non-GET Methoden werden auf die Instanzen gemapped:
+  buch.$save();
+  // auch unsere Custom-Funktion:
+  buch.$kaufen({anzahl:2});
+  // Erzeugt POST: /buecher/123?anzahl=2&amp;kaufen=true
+  // mit POST Data "buch"
+});
+    	</pre>
+    </div>
+    
+    <div id="praxisrestful4" class="step" data-x="6000" data-y="5700">
+        <pre class="prettyprint">
+// neues Buch anlegen:
+var buch = new Buecher();
+buch.autor = "Speedy Gonzales";
+buch.titel = "Fiesta Fiasco";
+buch.$save();
+// Erzeugt POST: /buecher mit 
+// {autor:'Speedy Gonzales', titel:'Fiesta Fiasco'}
+    	</pre>
+    </div>
+    
+    <div id="praxisrouting1" class="step" data-x="6000" data-y="6700">
+    	<h2>URLs / Routing / Partials</h2>
+    	<pre class="prettyprint">
+var app = angular.module("JLApp", [ngRoute]).
+  config(function($routeProvider, $locationProvider) {
+    $locationProvider.hashPrefix('!');
+    $routeProvider.
+      when("/buecher", 
+        { templateUrl: "partials/buecherlist.html" }).
+      when("/buecher/:id",
+        { templateUrl: "partials/buchdetails.html",
+          controller: "ShowCtrl" }).
+      otherwise( { redirectTo: "/buecher" });
+});
+		</pre>
+	</div>
+	
+	<div id="praxisrouting2" class="step" data-x="6000" data-y="7070">
+		<pre class="prettyprint">
+// in index.html: Rahmen mit Menü, Footer, ...
+// ...und Partial anzeigen:
+&lt;div ng-view&gt;&lt;/div&gt;
+		</pre>
+	</div>
+	
+	<div id="praxisrouting3" class="step" data-x="6000" data-y="7300">
+		<pre class="prettyprint">
+// Beispiel f. partials/buchdetails.html:
+&lt;h3&gt;<code>{{</code>buch.titel}} Details&lt;/h3&gt;
+&lt;p&gt;Name: <code>{{</code>buch.titel}}&lt;/p&gt;
+&lt;p&gt;Autor: <code>{{</code>buch.autor}}&lt;/p&gt;
+&lt;a href="#!buecher"&gt;Zurück zur Liste&lt;/a&gt;
+		</pre>
+	</div>
+	
+	<div id="praxistesting" class="step" data-x="6000" data-y="8300">
+		<h2>Testen mit Jasmine</h2>
+		<pre class="prettyprint">
+describe('SomeCtrl', function(){
+  var scope, ctrl;
+
+  beforeEach(inject(function($injector, 
+                             $controller, $rootScope) {  
+    scope = $rootScope.$new();
+    ctrl = $controller(SomeCtrl, { $scope: scope });
+  }));
+
+  it('should change message if name changed', function(){
+    scope.name = "Fritz";
+    scope.$digest();
+    expect(scope.greeting).toBe("Hello Fritz");
+  });
+});
+		</pre>
+	</div>
+	
+	<div id="yeoman" class="step" data-x="6000" data-y="9300">
+		<h2>Generate / Manage / Build / Test / Deploy: Yeoman</h2>
+		<img src="img/yoworkflow.jpg"/>
+		<p><a href="http://joachim.weinbrenner.name/2013/10/15/aufbau-einer-enterprise-angularjs-anwendung-mit-yeoman-in-5-minuten/" target="_blank">Kurzanleitung (Blog)</a></p>
+	</div>
+	
+	<div id="woanfangen" class="step" data-x="6000" data-y="10300">
+		<h2>Wo anfangen?</h2>
+		<ul>
+			<li>angular-seed<br/>
+			    <a href="https://github.com/angular/angular-seed" target="_blank">https://github.com/angular/angular-seed</a>
+			</li>
+			<li>angular-sprout<br/>
+			    <a href="https://github.com/jwanga/angular-sprout" target="_blank">https://github.com/jwanga/angular-sprout</a>
+			</li>
+			<li>Yeoman Generator<br/>
+				<a href="https://github.com/cgross/generator-cg-angular" target="_blank">https://github.com/cgross/generator-cg-angular</a>
+			</li>
+		</ul>
+	</div>
+	
+	<div id="linksliteratur" class="step" data-x="6000" data-y="11300">
+		<h2>Links</h2>
+		<ul>
+			<li><a href="http://angularjs.org/" target="_blank">http://angularjs.org/</a></li>
+			<li><a href="http://angularjs.de/" target="_blank">http://angularjs.de/</a></li>
+			<li><a href="https://egghead.io/" target="_blank">https://egghead.io/</a></li>
+		</ul>
+		<h2>Literatur</h2>
+		<ul>
+			<li>AngularJS | Brad Green | O'Reilly</li>
+			<li>Receipes with Angular.js | Frederik Dietz | Leanpub</li>
+		</ul>
+	</div>
+
+
+    <div id="vielendank" class="step slide jlslide" data-x="6000" data-y="-1500">
+        <h1>Vielen Dank!</h1>
+        <p>Noch Fragen?</p>
+        <p>&nbsp;</p>
+        <p>Blog: <a href="http://joachim.weinbrenner.name/" target="_blank">http://joachim.weinbrenner.name</a></p>
+        <p>&nbsp;</p>
+        <p>Twitter: <a href="https://twitter.com/weinbrenner" target="_blank">@weinbrenner</a></p>
+    </div>
+
+</div>
+
+<div class="hint">
+    <p>Use a spacebar or arrow keys to navigate</p>
+</div>
+<script>
+if ("ontouchstart" in document.documentElement) { 
+    document.querySelector(".hint").innerHTML = "<p>Tap on the left or right to navigate</p>";
+}
+</script>
+<script src="js/impress.js"></script>
+<script>impress().init();</script>
+
+</body>
+</html>
